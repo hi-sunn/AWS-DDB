@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Comme&display=swap");
+
+.grid {
+  display: grid;
+  grid-template-columns: 15.5% 84%;
+  grid-template-rows: 10%;
+  grid-column-gap: 10px;
+}
+
+.grayborder {
+  border: 0.5px solid gray;
+  box-shadow: 2.5px 2.5px darkgray;
+}
+
+body {
+  background-color: #f3f3f2;
+}
+
+.table {
+  background-color: #fbfbfa;
+}
+
+.table-anchor {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: black;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+
+.scroll-overflow-y {
+  height: 600px;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+tr td {
+  font-family: "Comme", sans-serif;
+  font-size: medium;
+}
+
+.tablelist-container{
+  border: solid 1px darkgray;
+}
+
+#tablelist{
+  background-color: whitesmoke;
+  transition: 0.5s;
+}
+
+#tablelist:hover{
+  background-color: darkgrey;
+  border-radius: 15px;
+  opacity: 1;
+}
