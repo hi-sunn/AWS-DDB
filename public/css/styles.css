@@ -31,7 +31,7 @@ body {
 
 
 .scroll-overflow-y {
-  height: 600px;
+  height: 700px;
   width: 100%;
   overflow-y: scroll;
 }
@@ -55,3 +55,7 @@ tr td {
   border-radius: 15px;
   opacity: 1;
 }
+
+/* .dtsb-titleRow {
+  display: none;
+} */

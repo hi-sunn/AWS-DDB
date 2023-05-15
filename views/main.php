@@ -142,6 +142,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
     <script src="https://cdn.datatables.net/datetime/1.4.1/js/dataTables.dateTime.min.js" integrity="sha256-+K//LRFhDW/cq6jmm/qL9NqbK04P7oeGrWJZDB/MtKE=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.4.2/css/searchBuilder.dataTables.min.css" integrity="sha256-Tnx4Ws7wTGvtj+BujEcplfmtO1VxagBRvB2qSp/Xyxo=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.4.1/css/dataTables.dateTime.min.css" integrity="sha256-6YeYhBx/LkYlekMIRM1+fXzFaRCQOLKms/lrFcO6tfI=" crossorigin="anonymous">
+    <!-- Custom Styling -->
     <link rel="stylesheet" href="./public/css/styles.css">
     <script>
         var data = <?= $json_service ?>;
@@ -151,7 +152,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
         // console.log(tableKey);
 
         $(document).ready(function() {
-            let table = $("#myTable").DataTable({
+            let tableData = $("#myTable").DataTable({
                 data: data,
                 paging: true,
                 scrollY: 550,
@@ -163,8 +164,8 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                 ],
 
             });
-            new $.fn.dataTable.SearchBuilder(table, {});
-            table.searchBuilder.container().prependTo(table.table().container());
+            new $.fn.dataTable.SearchBuilder(tableData, {});
+            tableData.searchBuilder.container().prependTo(tableData.table().container());
         });
 
         $(document).ready(function() {
@@ -176,33 +177,22 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
             });
         });
     </script>
-
     <title>AWS DDB</title>
 </head>
-
 <body>
-
     <div class="grid">
-
         <div style="padding: 1px; border-radius:4px;" class="scroll-overflow-y tablelist-container">
-            <table class="grayborder ">
+            <table class="grayborder">
                 <tbody>
                     <tr style="background-color:#FAFAFA; height:50px;">
                         <td><b>Tables</b> <span>(<?= $table_count ?>)</span></td>
                     </tr>
-
-                    <?php
-                    foreach ($tablenameArray as $table) :
-
-                    ?>
+                    <?php foreach ($tablenameArray as $table) : ?>                    
                         <tr>
                             <td id="tablelist"><a class="table-anchor" href="?db=<?= $table ?>"><?= $table ?></a></td>
                         </tr>
                     <?php endforeach ?>
-
-
                 </tbody>
-
             </table>
         </div>
 
@@ -219,13 +209,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                 <tr>
                     <td></td>
                 </tr>
-
             </tbody>
-        </table>
-
-    </div>
+        </table>   
 </body>
-
-
-
 </html>
