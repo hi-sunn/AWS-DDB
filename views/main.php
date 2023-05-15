@@ -157,7 +157,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                 paging: true,
                 scrollY: 550,
                 columns: tableKey,
-                dom: 'Bfrtp',
+                dom: 'Brtp',
                 buttons: [
                     'excelHtml5',
                     'csvHtml5'
