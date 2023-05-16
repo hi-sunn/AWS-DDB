@@ -157,7 +157,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                 paging: true,
                 scrollY: 550,
                 columns: tableKey,
-                dom: 'Brtp',
+                dom: 'Brtpi',
                 buttons: [
                     'excelHtml5',
                     'csvHtml5'
@@ -176,18 +176,29 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                 columns: [1]
             });
         });
+
+        $(document).ready(function() {
+            $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".tableName tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
     </script>
-    <title>AWS DDB</title>
+    <title><?= $db ?></title>
 </head>
+
 <body>
     <div class="grid">
         <div style="padding: 1px; border-radius:4px;" class="scroll-overflow-y tablelist-container">
+            <input id="myInput" type="text" style="width:100%;height:25px;" placeholder="Search..">
             <table class="grayborder">
-                <tbody>
+                <tbody class="tableName">
                     <tr style="background-color:#FAFAFA; height:50px;">
                         <td><b>Tables</b> <span>(<?= $table_count ?>)</span></td>
                     </tr>
-                    <?php foreach ($tablenameArray as $table) : ?>                    
+                    <?php foreach ($tablenameArray as $table) : ?>
                         <tr>
                             <td id="tablelist"><a class="table-anchor" href="?db=<?= $table ?>"><?= $table ?></a></td>
                         </tr>
@@ -210,6 +221,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                     <td></td>
                 </tr>
             </tbody>
-        </table>   
+        </table>
 </body>
+
 </html>
