@@ -164,6 +164,11 @@ $table_count = count($tablenameArray);
                 });
             });
         });
+        // Display table name
+        $(document).ready(function() {
+            let tri = $(".dtsb-searchBuilder").find(".dtsb-title").html("<h2 class='font-tablename'> <?= $db ?> </h2>");         
+
+        });
     </script>
     <title><?= $db ?></title>
 </head>
@@ -188,7 +193,7 @@ $table_count = count($tablenameArray);
                         <tr>
                             <td id="tablelist"><a id="<?= $table ?>" class="table-anchor" href="?db=<?= $table ?>"><?= $table ?></a></td>
                         </tr>
-                    <?php endforeach ?>                  
+                    <?php endforeach ?>
                 </tbody>
             </table>
         </div>

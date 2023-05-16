@@ -29,7 +29,6 @@ body {
   padding-bottom: 5px;
 }
 
-
 .scroll-overflow-y {
   height: 700px;
   width: 100%;
@@ -41,7 +40,7 @@ tr td {
   font-size: medium;
 }
 /* for displaying table name */
-.font-h1 {
+.font-tablename {
   font-family: "Comme", sans-serif;
   text-align: center;
   /* position: absolute; */
@@ -50,16 +49,16 @@ tr td {
   left: 30%; */
 }
 
-.tablelist-container{
+.tablelist-container {
   border: solid 1px darkgray;
 }
 
-#tablelist{
+#tablelist {
   background-color: whitesmoke;
   transition: 0.5s;
 }
 
-#tablelist:hover{
+#tablelist:hover {
   background-color: darkgrey;
   border-radius: 15px;
   opacity: 1;
