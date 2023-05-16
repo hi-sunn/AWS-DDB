@@ -170,8 +170,7 @@ $table_count = count($tablenameArray);
 
 <body>
     <?php  
-    if (isset($_GET['error'])) {
-        
+    if (isset($_GET['error'])) {        
         echo "<script>alert('The table not exist !')</script>";
     }
     ?>
@@ -188,6 +187,7 @@ $table_count = count($tablenameArray);
                             <td id="tablelist"><a id="<?= $table ?>" class="table-anchor" href="?db=<?= $table ?>"><?= $table ?></a></td>
                         </tr>
                     <?php endforeach ?>
+                    <?="Current Table: <b>".$db."</b>" ?>
                 </tbody>
             </table>
         </div>
@@ -206,7 +206,7 @@ $table_count = count($tablenameArray);
                     <td></td>
                 </tr>
             </tbody>
-        </table>
+        </table>       
 </body>
 
 </html>
