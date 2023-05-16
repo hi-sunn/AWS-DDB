@@ -25,29 +25,39 @@ if (isset($_GET['db'])) {
     $db = '257PropertyProsperity';
 }
 
-// Get tablelist names. limit at 100 table names per instance
-$tablelist_1stBatch = $sdk->listTables([
-    'LastEvaluatedTableName' => 'dev-gg_joya'
-]);
 
-$tablelist_2ndBatch = $sdk->listTables([
-    'ExclusiveStartTableName' => 'dev-gg_joya',
-    'LastEvaluatedTableName' => 'gcove_enso-woods'
-]);
+// get table list
 
-$tablelist_3rdBatch = $sdk->listTables([
-    'ExclusiveStartTableName' => 'gcove_enso-woods',
-    'LastEvaluatedTableName' => 'skyparkRegistration'
-]);
-$tablelist_4thBatch = $sdk->listTables([
-    'ExclusiveStartTableName' => 'skyparkRegistration'
-]);
+$i = 0;
+$tablenameArray = [];
+$tablelist = $sdk->listTables();
+$lastEvaluatedTableName = ['', 'dev-gg_joya', 'gcove_enso-woods', 'skyparkRegistration'];
+
+while ($i < count($lastEvaluatedTableName)) {
+    if ($lastEvaluatedTableName[$i] == '') {
+        $tablelist = $sdk->listTables();
+        foreach ($tablelist['TableNames'] as $value) {
+            array_push($tablenameArray, $value);
+        }
+    } else {
+        $tablelist = $sdk->listTables([
+            'ExclusiveStartTableName' => $lastEvaluatedTableName[$i]
+        ]);
+        foreach ($tablelist['TableNames'] as $value) {
+            array_push($tablenameArray, $value);
+        }
+    }
+    $i++;
+}
 
 // scan @ get 1 or more item(s) in a table
-$service = $sdk->scan([
-    'TableName' => $db
-]);
-
+try {
+    $service = $sdk->scan([
+        'TableName' => $db
+    ]);
+} catch (Exception $e) {
+    echo "Oops, it seems that the table is not exist...";
+}
 
 $serviceArray = [];
 $tableDataArray = [];
@@ -75,41 +85,13 @@ $json_service =  json_encode($serviceArray);
 // Error message for empty table
 $error = '';
 if (empty($tableDataArray[0])) {
-    $error = "The Table is empty";
-    header("Location: http://localhost/AwsDDB/?db=257PropertyProsperity&error=" . $error);
+    $error = "The Table not exist !";
+    header("Location: http://localhost/Aws-DDB/?db=257PropertyProsperity&error=" . $error);
 }
 
-if (isset($_GET['error'])) {
-    echo $error;
-}
+
 // Count table amount
-$table_count = count($tablelist_1stBatch['TableNames']) + count($tablelist_2ndBatch['TableNames']) + count($tablelist_3rdBatch['TableNames']) + count($tablelist_4thBatch['TableNames']);
-
-
-// listing table list (using datatable) 
-$tablelistArray = [];
-foreach ($tablelist_1stBatch['TableNames'] as $tableName) {
-    $tablename = "{" . "\"tablename\":" . "\"" . $tableName . "\"" . "}";
-    array_push($tablelistArray, json_decode($tablename));
-}
-$tablelistJson = json_encode($tablelistArray);
-
-
-// insert table list into single array
-$tablenameArray = [];
-foreach ($tablelist_1stBatch['TableNames'] as $value) {
-    array_push($tablenameArray, $value);
-}
-foreach ($tablelist_2ndBatch['TableNames'] as $value) {
-    array_push($tablenameArray, $value);
-}
-foreach ($tablelist_3rdBatch['TableNames'] as $value) {
-    array_push($tablenameArray, $value);
-}
-foreach ($tablelist_4thBatch['TableNames'] as $value) {
-    array_push($tablenameArray, $value);
-}
-
+$table_count = count($tablenameArray);
 
 ?>
 
@@ -146,10 +128,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
     <link rel="stylesheet" href="./public/css/styles.css">
     <script>
         var data = <?= $json_service ?>;
-        var tableKey = <?= $json_tablekey ?>;
-        var tablelist = <?= $tablelistJson ?>;
-        // console.log(data);
-        // console.log(tableKey);
+        var tableKey = <?= $json_tablekey ?>;   
 
         $(document).ready(function() {
             let tableData = $("#myTable").DataTable({
@@ -167,7 +146,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
             new $.fn.dataTable.SearchBuilder(tableData, {});
             tableData.searchBuilder.container().prependTo(tableData.table().container());
         });
-
+        // display table name
         $(document).ready(function() {
             $("#tableName").DataTable({
                 data: [],
@@ -176,7 +155,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                 columns: [1]
             });
         });
-
+        // search table name
         $(document).ready(function() {
             $("#myInput").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
@@ -190,9 +169,15 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
 </head>
 
 <body>
+    <?php  
+    if (isset($_GET['error'])) {
+        
+        echo "<script>alert('The table not exist !')</script>";
+    }
+    ?>
     <div class="grid">
         <div style="padding: 1px; border-radius:4px;" class="scroll-overflow-y tablelist-container">
-            <input id="myInput" type="text" style="width:100%;height:25px;" placeholder="Search..">
+            <input id="myInput" type="text" style="width:97%;height:25px;" placeholder="Search..">
             <table class="grayborder">
                 <tbody class="tableName">
                     <tr style="background-color:#FAFAFA; height:50px;">
@@ -200,7 +185,7 @@ foreach ($tablelist_4thBatch['TableNames'] as $value) {
                     </tr>
                     <?php foreach ($tablenameArray as $table) : ?>
                         <tr>
-                            <td id="tablelist"><a class="table-anchor" href="?db=<?= $table ?>"><?= $table ?></a></td>
+                            <td id="tablelist"><a id="<?= $table ?>" class="table-anchor" href="?db=<?= $table ?>"><?= $table ?></a></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
