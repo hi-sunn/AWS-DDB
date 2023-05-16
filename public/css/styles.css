@@ -40,6 +40,15 @@ tr td {
   font-family: "Comme", sans-serif;
   font-size: medium;
 }
+/* for displaying table name */
+.font-h1 {
+  font-family: "Comme", sans-serif;
+  text-align: center;
+  /* position: absolute; */
+  /* top:10%;   */
+  /* top:86px;  
+  left: 30%; */
+}
 
 .tablelist-container{
   border: solid 1px darkgray;

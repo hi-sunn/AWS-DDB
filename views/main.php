@@ -128,7 +128,7 @@ $table_count = count($tablenameArray);
     <link rel="stylesheet" href="./public/css/styles.css">
     <script>
         var data = <?= $json_service ?>;
-        var tableKey = <?= $json_tablekey ?>;   
+        var tableKey = <?= $json_tablekey ?>;
 
         $(document).ready(function() {
             let tableData = $("#myTable").DataTable({
@@ -169,11 +169,13 @@ $table_count = count($tablenameArray);
 </head>
 
 <body>
-    <?php  
-    if (isset($_GET['error'])) {        
+    <?php
+    if (isset($_GET['error'])) {
         echo "<script>alert('The table not exist !')</script>";
     }
     ?>
+    <!-- table indicator -->
+    <!-- <h2 class="font-h1"><?= $db ?> Table</h2> -->
     <div class="grid">
         <div style="padding: 1px; border-radius:4px;" class="scroll-overflow-y tablelist-container">
             <input id="myInput" type="text" style="width:97%;height:25px;" placeholder="Search..">
@@ -186,8 +188,7 @@ $table_count = count($tablenameArray);
                         <tr>
                             <td id="tablelist"><a id="<?= $table ?>" class="table-anchor" href="?db=<?= $table ?>"><?= $table ?></a></td>
                         </tr>
-                    <?php endforeach ?>
-                    <?="Current Table: <b>".$db."</b>" ?>
+                    <?php endforeach ?>                  
                 </tbody>
             </table>
         </div>
@@ -206,7 +207,7 @@ $table_count = count($tablenameArray);
                     <td></td>
                 </tr>
             </tbody>
-        </table>       
+        </table>
 </body>
 
 </html>
