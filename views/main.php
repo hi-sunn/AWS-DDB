@@ -84,8 +84,9 @@ $json_service =  json_encode($serviceArray);
 // Error message for empty table
 $error = '';
 if (empty($tableDataArray[0])) {
-    $error = "The Table not exist !";
-    header("Location: http://localhost/Aws-DDB/?db=257PropertyProsperity&error=" . $error);}
+    $error = "The Table does not exist !";
+    header("Location: http://localhost/Aws-DDB/?db=257PropertyProsperity&error=" . $error);
+}
 
 
 // Count table amount
@@ -175,6 +176,7 @@ $table_count = count($tablenameArray);
     <?php
     if (isset($_GET['error'])) {
         echo "<script>alert('" . $_GET['error'] . "')</script>";
+        echo "<script>location.href= 'http://localhost/Aws-DDB/' </script>";
     }
     ?>
     <!-- table indicator -->
