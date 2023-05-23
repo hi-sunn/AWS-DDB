@@ -30,7 +30,6 @@ if (isset($_GET['db'])) {
 
 $i = 0;
 $tablenameArray = [];
-$tablelist = $sdk->listTables();
 $lastEvaluatedTableName = ['', 'dev-gg_joya', 'gcove_enso-woods', 'skyparkRegistration'];
 
 while ($i < count($lastEvaluatedTableName)) {
@@ -86,8 +85,7 @@ $json_service =  json_encode($serviceArray);
 $error = '';
 if (empty($tableDataArray[0])) {
     $error = "The Table not exist !";
-    header("Location: http://localhost/Aws-DDB/?db=257PropertyProsperity&error=" . $error);
-}
+    header("Location: http://localhost/Aws-DDB/?db=257PropertyProsperity&error=" . $error);}
 
 
 // Count table amount
@@ -166,7 +164,7 @@ $table_count = count($tablenameArray);
         });
         // Display table name
         $(document).ready(function() {
-            let tri = $(".dtsb-searchBuilder").find(".dtsb-title").html("<h2 class='font-tablename'> <?= $db ?> </h2>");         
+            let tri = $(".dtsb-searchBuilder").find(".dtsb-title").html("<h2 class='font-tablename'> <?= $db ?> </h2>");
 
         });
     </script>
@@ -176,7 +174,7 @@ $table_count = count($tablenameArray);
 <body>
     <?php
     if (isset($_GET['error'])) {
-        echo "<script>alert('The table not exist !')</script>";
+        echo "<script>alert('" . $_GET['error'] . "')</script>";
     }
     ?>
     <!-- table indicator -->
