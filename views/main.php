@@ -76,17 +76,23 @@ foreach ($service['Items'] as $value) {
     }
 }
 
+
 // Convert db items into json
 foreach ($service['Items'] as $value) {
     $columnlength = count($value);
-    if ($columnlength < $maxcolumnlength) {
+    if ($columnlength < $maxcolumnlength) {    
         $tablekey = $marshal->unmarshalItem($value);
         $columnkeys =  array_keys($value);
+        // find what key(s) are missing
         $missing_key = array_values(array_diff($referenced_key, $columnkeys));
         $keycount = count($tablekey);
+        // insert missing values into the array
         $S["S"] = "";
-        $value[$missing_key[0]] = $S;
-        $tablevalue = $marshal->unmarshalJson($value);  
+        $counter = count($missing_key);
+        for ($i=0; $i < $counter; $i++) { 
+            $value[$missing_key[$i]] = $S;            
+        }
+        $tablevalue = $marshal->unmarshalJson($value);
         array_push($serviceArray, json_decode($tablevalue));
     } else {
         $tablevalue = $marshal->unmarshalJson($value);
@@ -162,24 +168,6 @@ $table_count = count($tablenameArray);
         $(document).ready(function() {
             let tableData = $("#myTable").DataTable({
                 data: data,
-                // data: [{
-                //     "created_at": "2022-12-20 10:15:08",
-                //     "utm_sources": "{\"utm_source\":\"google\",\"utm_medium\":\"cpc\",\"utm_campaign\":\"designerhomes_SEM\",\"utm_term\":\" \"}",
-                //     "project": "Aria, Luxura",
-                //     "uuid": "205613b0-800c-11ed-aea6-b2f00926e861",
-                //     "source": "SearchOP1",
-                //     "email": "ecam2462@gmail.com",
-                //     "phone": "01111404616",
-                //     "name": "Mohamad hishamudin komoh"
-                // }, {
-                //     "created_at": "2022-10-20 10:36:00",
-                //     "project": "Duet, Lucent Residence",
-                //     "uuid": "eee79286-501f-11ed-a3d6-362af6ac807e",
-                //     "source": "Twentyfive.7 257 Designer Collection Microsite 2022",
-                //     "email": "testnex2@gmail.com",
-                //     "phone": "0118977777",
-                //     "name": "NexTest2"
-                // }],
                 paging: true,
                 scrollY: 550,
                 columns: tableKey,
@@ -251,7 +239,22 @@ $table_count = count($tablenameArray);
     <!-- <span class="font-h1"><?= $db ?> Table</span> -->
     <div class="grid">
         <div style="padding: 1px; border-radius:4px;" class="scroll-overflow-y tablelist-container">
-            <input id="myInput" type="text" style="width:97%;height:25px;" placeholder="Search..">
+            <script>
+                $(document).ready(function() {
+                    $("#myInput").val("<?=$_GET["db"]?>");
+
+                });
+
+
+
+                // let input_value = $("#myInput").val();
+                // if (input_value == '' || input_value == null) {
+                //     $("#myInput").val("")
+                // }else{
+                //     $("#myInput").val(<?= $_GET["db"] ?>)
+                // }
+            </script>
+            <input id="myInput" type="text" style="width:97%;height:25px;" placeholder="Search...">
             <table class="grayborder">
                 <tbody class="tableName">
                     <tr style="background-color:#FAFAFA; height:50px;">
