@@ -62,16 +62,43 @@ $serviceArray = [];
 $tableDataArray = [];
 $tablecount = 0;
 
+// get highest column count
+$maxcolumnlength = 0;
+foreach ($service['Items'] as $value) {
+    if ($maxcolumnlength == 0) {
+        $maxcolumnlength = count($value);
+        $referenced_key = array_keys($value);
+    }
+
+    if (count($value) > $maxcolumnlength) {
+        $maxcolumnlength = count($value);
+        $referenced_key = array_keys($value);
+    }
+}
+
 // Convert db items into json
 foreach ($service['Items'] as $value) {
-    $tablevalue = $marshal->unmarshalJson($value);
-    $tablekey = $marshal->unmarshalItem($value);
-    if ($tablecount < 1) {
-        array_push($tableDataArray, array_keys($tablekey));
-        $tablecount++;
+    $columnlength = count($value);
+    if ($columnlength < $maxcolumnlength) {
+        $tablekey = $marshal->unmarshalItem($value);
+        $columnkeys =  array_keys($value);
+        $missing_key = array_values(array_diff($referenced_key, $columnkeys));
+        $keycount = count($tablekey);
+        $S["S"] = "";
+        $value[$missing_key[0]] = $S;
+        $tablevalue = $marshal->unmarshalJson($value);  
+        array_push($serviceArray, json_decode($tablevalue));
+    } else {
+        $tablevalue = $marshal->unmarshalJson($value);
+        $tablekey = $marshal->unmarshalItem($value);
+        if ($tablecount < 1) {
+            array_push($tableDataArray, array_keys($tablekey));
+            $tablecount++;
+        }
+        array_push($serviceArray, json_decode($tablevalue));
     }
-    array_push($serviceArray, json_decode($tablevalue));
 }
+
 // Convert db key into json
 $tableDataColumn = [];
 foreach ($tableDataArray[0] as $tablecolumn) {
@@ -80,6 +107,7 @@ foreach ($tableDataArray[0] as $tablecolumn) {
 }
 $json_tablekey = json_encode($tableDataColumn);
 $json_service =  json_encode($serviceArray);
+// echo "<pre>".$json_service."</pre>";
 
 // Error message for empty table
 $error = '';
@@ -102,15 +130,15 @@ $table_count = count($tablenameArray);
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Default UI src -->
-    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./node_modules//datatables.net-dt/css/jquery.dataTables.min.css" />
-    <script src="./node_modules/datatables.net/js/jquery.dataTables.min.js"></script> -->
+    <script src="./node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
     <!-- Jquery UI src -->
-    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js" integrity="sha256-VSu9DD6vJurraXgjxQJv9BuzedGfJm7XEgPQQehKBlw=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.jqueryui.min.js" integrity="sha256-39KLqmdnivnZ0OGcx+5CoAcwdauI0bdEDcFhdVTNit0=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" integrity="sha256-yMIVeRjJ/tC7ncxWyWtS3Hr3CwXKAijkZ+r5F3d1Gtc=" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.jqueryui.min.css" integrity="sha256-1mZHAtpOaAWOWfEqCa7ezIHD2LA1YsUM28154dMqXWA=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.jqueryui.min.css" integrity="sha256-1mZHAtpOaAWOWfEqCa7ezIHD2LA1YsUM28154dMqXWA=" crossorigin="anonymous"> -->
     <!-- Export dependency -->
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js" integrity="sha256-dJiW4V/uPOIBxZUw2TwTxw1eSCqwzUDZIo2jDFyKBLw=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" integrity="sha256-RbP/rbx4XeYJH6eYUniR63Jk5NEV48Gjestg49cNSWY=" crossorigin="anonymous"></script>
@@ -128,14 +156,34 @@ $table_count = count($tablenameArray);
     <script>
         var data = <?= $json_service ?>;
         var tableKey = <?= $json_tablekey ?>;
+        console.log(data)
+        console.log(tableKey);
 
         $(document).ready(function() {
             let tableData = $("#myTable").DataTable({
                 data: data,
+                // data: [{
+                //     "created_at": "2022-12-20 10:15:08",
+                //     "utm_sources": "{\"utm_source\":\"google\",\"utm_medium\":\"cpc\",\"utm_campaign\":\"designerhomes_SEM\",\"utm_term\":\" \"}",
+                //     "project": "Aria, Luxura",
+                //     "uuid": "205613b0-800c-11ed-aea6-b2f00926e861",
+                //     "source": "SearchOP1",
+                //     "email": "ecam2462@gmail.com",
+                //     "phone": "01111404616",
+                //     "name": "Mohamad hishamudin komoh"
+                // }, {
+                //     "created_at": "2022-10-20 10:36:00",
+                //     "project": "Duet, Lucent Residence",
+                //     "uuid": "eee79286-501f-11ed-a3d6-362af6ac807e",
+                //     "source": "Twentyfive.7 257 Designer Collection Microsite 2022",
+                //     "email": "testnex2@gmail.com",
+                //     "phone": "0118977777",
+                //     "name": "NexTest2"
+                // }],
                 paging: true,
                 scrollY: 550,
                 columns: tableKey,
-                dom: 'Brtpi',
+                dom: 'Bfrtpi',
                 buttons: [
                     'excelHtml5',
                     'csvHtml5'
@@ -164,15 +212,35 @@ $table_count = count($tablenameArray);
             });
         });
         // Display table name
-        $(document).ready(function() {
-            let tri = $(".dtsb-searchBuilder").find(".dtsb-title").html("<h2 class='font-tablename'> <?= $db ?> </h2>");
+        // $(document).ready(function() {
+        //     let tri = $(".dtsb-searchBuilder").find(".dtsb-title").html("<h2 class='font-tablename'> <?= $db ?> </h2>");
+        //     let tri2 = $(".dtsb-searchBuilder").find(".dtsb-title").html();
+        //     let add_condition_btn = $(".dtsb-group").find(".dtsb-button");
 
-        });
+        //     $(add_condition_btn).click(function() {
+        //         $(".dtsb-searchBuilder").find(".dtsb-title").html("<h2 class='font-tablename'> <?= $db ?> </h2>");
+        //         let exit_btn = $(".dtsb-group").find(".dtsb-delete");
+
+        //         $(exit_btn).click(function() {
+        //             $(".dtsb-searchBuilder").find(".dtsb-title").html("<h2 class='font-tablename'> <?= $db ?> </h2>");
+        //             // console.log("inside");
+        //         });
+
+        //         // console.log(exit_btn.html());
+
+
+        //     });
+
+
+        // });
+        console.log(data);
+        console.log(tableKey);
     </script>
     <title><?= $db ?></title>
 </head>
 
 <body>
+
     <?php
     if (isset($_GET['error'])) {
         echo "<script>alert('" . $_GET['error'] . "')</script>";
@@ -180,14 +248,14 @@ $table_count = count($tablenameArray);
     }
     ?>
     <!-- table indicator -->
-    <!-- <h2 class="font-h1"><?= $db ?> Table</h2> -->
+    <!-- <span class="font-h1"><?= $db ?> Table</span> -->
     <div class="grid">
         <div style="padding: 1px; border-radius:4px;" class="scroll-overflow-y tablelist-container">
             <input id="myInput" type="text" style="width:97%;height:25px;" placeholder="Search..">
             <table class="grayborder">
                 <tbody class="tableName">
                     <tr style="background-color:#FAFAFA; height:50px;">
-                        <td><b>Tables</b> <span>(<?= $table_count ?>)</span></td>
+                        <td><b>Tables</b> <span>(<?= $table_count ?>)</span> </td>
                     </tr>
                     <?php foreach ($tablenameArray as $table) : ?>
                         <tr>
@@ -216,3 +284,11 @@ $table_count = count($tablenameArray);
 </body>
 
 </html>
+<script>
+    $(document).ready(function() {
+        $("#<?= $db ?>").css('background-color', 'darkgrey', );
+        $("#<?= $db ?>").css('border-radius', '15px');
+        $("#<?= $db ?>").css('opacity', '1');
+        $("#<?= $db ?>").focus();
+    });
+</script>
