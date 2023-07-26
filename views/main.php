@@ -118,7 +118,7 @@ $json_service =  json_encode($serviceArray);
 // Error message for empty table
 $error = '';
 if (empty($tableDataArray[0])) {
-    $error = "The Table does not exist !";
+    $error = "The Table does not exist or empty !";
     header("Location: http://localhost/Aws-DDB/?db=257PropertyProsperity&error=" . $error);
 }
 
@@ -159,6 +159,11 @@ $table_count = count($tablenameArray);
     <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.4.1/css/dataTables.dateTime.min.css" integrity="sha256-6YeYhBx/LkYlekMIRM1+fXzFaRCQOLKms/lrFcO6tfI=" crossorigin="anonymous">
     <!-- Custom Styling -->
     <link rel="stylesheet" href="./public/css/styles.css">
+    <!-- favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="public/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="public/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="public/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../public/favicon/site.webmanifest">
     <script>
         var data = <?= $json_service ?>;
         var tableKey = <?= $json_tablekey ?>;
